@@ -1,7 +1,11 @@
 import json
-from pydantic import BaseModel
 from typing import Any
+from pydantic import BaseModel
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
+from core.langgraph_.Workflow import workflow_hitl
+
+db_path = "Storage/Database/state.db"
 
 def sse_response(event: str, data: dict, concept_id: str):
     """
@@ -37,6 +41,12 @@ def to_json_safe(obj: Any):
         return [to_json_safe(v) for v in obj]
 
     return obj
+
+async def get_graph():
+    cm = AsyncSqliteSaver.from_conn_string(db_path)
+    checkpointer = await cm.__aenter__()
+    graph = workflow_hitl.compile(checkpointer=checkpointer)
+    return graph, cm
 
 
 def upload_diagrams(directory_name: str):

@@ -2,22 +2,11 @@ import random
 from langgraph.types import Command
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
-from core.langgraph_.Workflow import workflow_hitl
-from utils import sse_response, to_json_safe, upload_diagrams, add_explanation_db
+from utils import sse_response, to_json_safe, get_graph
 from schema import ResumePayload
 
 router = APIRouter()
-
-db_path = "Storage/Database/state.db"
-
-
-async def get_graph():
-    cm = AsyncSqliteSaver.from_conn_string(db_path)
-    checkpointer = await cm.__aenter__()
-    graph = workflow_hitl.compile(checkpointer=checkpointer)
-    return graph, cm
 
 
 @router.get("/api/v1/start_agent_hitl")

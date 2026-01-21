@@ -1,1 +1,1 @@
-from .clients import openai_client, google_client, async_openai_client 
+from .clients import openai_client, google_client, async_openai_client
