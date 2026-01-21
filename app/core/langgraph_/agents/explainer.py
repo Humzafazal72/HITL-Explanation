@@ -2,15 +2,27 @@ from llm.clients import openai_client
 from llm.prompts import EXPLAINER_SYSTEM_PROMPT
 from core.langgraph_.schema import AgentState, ExplainerOutput
 
+
 def explainer(state: AgentState):
-    """Generates intuitive explanations for the concept."""
+    """
+    Generates intuitive explanations for a mathematical concept.
     
-    if hasattr(state,"explainer_decision"):
-        content = f"Concept: {state['concept']}\n<Explanation Generated>\n{str(state['explainer_output'])}\n<Suggested Changes>\n{state['explainer_decision'].comment}"
-        print(content)
+    :param state: The current state of the agent
+    :type state: AgentState
+    """
+
+    # check if a review has been demanded by the client.
+    if hasattr(state, "explainer_decision"):
+        if state["explainer_decision"].change:
+            content = f"""Concept: {state['concept']}\n
+                    <Explanation Generated>\n
+                    {str(state['explainer_output'])}\n
+                    <Suggested Changes>\n
+                    {state['explainer_decision'].comment}"""
     else:
         content = state["concept"]
 
+    # Generate and Parse an Explanation
     response = openai_client.responses.parse(
         model="gpt-5-chat-latest",
         input=[
@@ -19,8 +31,8 @@ def explainer(state: AgentState):
         ],
         text_format=ExplainerOutput,
     )
-
     parsed = response.output_parsed
+
     return {
         "explainer_output": {
             "context": parsed.context,
