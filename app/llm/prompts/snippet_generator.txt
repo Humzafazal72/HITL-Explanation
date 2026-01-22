@@ -81,11 +81,10 @@ Surds give us a powerful language to express exact irrational values neatly and 
 {
   "context_snippets": [
     "Right-angled triangle",
-    "Sides: a, b, c (hypotenuse)",
     "Geometry ↔ Algebra"
   ],
   "step_snippets": [
-    ["90° angle → right triangle"],
+    ["Sides: a, b, c (hypotenuse)", "90° angle → right triangle"],
     ["Hypotenuse² = Base² + Perpendicular²"],
     ["c² = a² + b²"],
     ["a = √(c² - b²)", "b = √(c² - a²)"],

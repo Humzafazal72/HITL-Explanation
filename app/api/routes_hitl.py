@@ -1,3 +1,4 @@
+import os
 import random
 from langgraph.types import Command
 from fastapi import APIRouter, Query
@@ -9,7 +10,7 @@ from schema import ResumePayload
 router = APIRouter()
 
 
-@router.get("/api/v1/start_agent_hitl")
+@router.get("/api/start_agent_hitl")
 async def start_agent_hitl(concept: str = Query(...)):
     graph_app, cm = await get_graph()
 
@@ -30,7 +31,7 @@ async def start_agent_hitl(concept: str = Query(...)):
     #     },
     # }
 
-    state = {"concept": concept}
+    state = {"concept": concept, "concept_id": str(concept_id)}
 
     async def event_generator():
         try:
@@ -53,7 +54,7 @@ async def start_agent_hitl(concept: str = Query(...)):
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
-@router.post("/api/v1/resume_agent_hitl")
+@router.post("/api/resume_agent_hitl")
 async def resume_agent_hitl(data: ResumePayload):
     graph_app, cm = await get_graph()
     config = {"configurable": {"thread_id": data.concept_id}}
@@ -71,6 +72,10 @@ async def resume_agent_hitl(data: ResumePayload):
         # remove the figures from the change descriptions that are to be deleted
         for fig in to_delete:
             del data.decision.change_descriptions[fig]
+
+        # delete the figure to be deleted from the storage
+        for fig in to_delete:
+            os.remove(f"Storage/{str(data.concept_id)}/{fig}.png")
 
         # after deletion if no changes left set change to False
         if not data.decision.change_descriptions:

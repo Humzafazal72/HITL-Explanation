@@ -1,5 +1,6 @@
-from core.langgraph_.schema import AgentState
 import os
+
+from core.langgraph_.schema import AgentState
 
 
 def contextual_prompt_generator(state: AgentState):
@@ -12,9 +13,10 @@ def contextual_prompt_generator(state: AgentState):
 
     prompts = state["prompter_output"].prompts
     contextual_prompts = []
+    concept_id = str(state['concept_id'])
 
     # create the directory for the concept.
-    os.makedirs(f"Storage/{state['concept']}", exist_ok=True)
+    os.makedirs(f"Storage/{concept_id}", exist_ok=True)
 
     # generate contexual prompt for each prompt
     for i, p in enumerate(prompts):
@@ -30,7 +32,7 @@ def contextual_prompt_generator(state: AgentState):
                     + "\nfigure name: "
                     + f"fig_{i}"
                     + "\n folder name:"
-                    + state["concept"].replace(" ", "_")
+                    + concept_id
                     if i == 0 # for the first prompt we don't need any context for previous prompts.
                     else "<Older Prompts/Explanation Steps>\n" 
                     + "\n".join(prompts[:i])
@@ -39,7 +41,7 @@ def contextual_prompt_generator(state: AgentState):
                     + "\nfigure name:"
                     + f"fig_{i}"
                     + "\n folder name:"
-                    + state["concept"].replace(" ", "_")
+                    + concept_id
                 ),
             }
         )

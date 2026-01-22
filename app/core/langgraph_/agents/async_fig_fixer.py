@@ -5,10 +5,10 @@ from llm.prompts import FIXER_SYSTEM_PROMPT
 
 async def async_fig_fixer(state: AgentState):
     """
-        fix the figures as suggested by the user
-        
-        :param state: Current state of the agent
-        :type state: AgentState
+    fix the figures as suggested by the user
+
+    :param state: Current state of the agent
+    :type state: AgentState
     """
     generated_codes = state["async_coder_output"].copy()
     contextual_prompts = state["contextual_prompts"].copy()
@@ -23,9 +23,11 @@ async def async_fig_fixer(state: AgentState):
             {
                 "figure_id": fig_name,
                 "prompt": f"""
-            <Concept Name>\n{concept}\n<Input Prompt>\n{get_contextual_prompt(contextual_prompts,fig_name)}
-            \n<Generated Code>\n{generated_codes[fig_name]}\n<Changes to be made>\n{change_desc}
-            """,
+                <Concept Name>\n{concept}\n
+                <Input Prompt>\n{get_contextual_prompt(contextual_prompts,fig_name)}\n
+                <Generated Code>\n{generated_codes[fig_name]}\n
+                <Changes to be made>\n{change_desc}
+                """,
             }
         )
 

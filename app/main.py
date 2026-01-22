@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-from api import routes_hitl
+from api import routes_hitl, routes_crud
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 app.include_router(routes_hitl.router,prefix="",tags=["HITL"])
+app.include_router(routes_crud.router,prefix="",tags=["CRUD"])
 
 @app.get("/")
 async def startup():

@@ -10,10 +10,8 @@ matplotlib==3.10.7
 fastapi==0.119.1
 uvicorn==0.38.0
 sse-starlette==3.0.2
-#langchain-sandbox==0.0.6
 google==3.0.0
 google-genai==1.46.0
 aiosqlite==0.21.0
-markdown==3.10
-soundfile==0.13.1
 langgraph-checkpoint-sqlite==2.0.11
+boto3==1.42.31
