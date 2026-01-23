@@ -1,5 +1,5 @@
 from llm.clients import openai_client
-from llm.prompts import EXPLAINER_SYSTEM_PROMPT
+from llm.prompts import PromptManager
 from core.langgraph_.schema import AgentState, ExplainerOutput
 
 
@@ -22,11 +22,13 @@ def explainer(state: AgentState):
     else:
         content = state["concept"]
 
+    pm = PromptManager(type_="explainer")
+    explainer_system_prompt = pm.get_system_prompt()
     # Generate and Parse an Explanation
     response = openai_client.responses.parse(
         model="gpt-5-chat-latest",
         input=[
-            {"role": "system", "content": EXPLAINER_SYSTEM_PROMPT},
+            {"role": "system", "content": explainer_system_prompt},
             {"role": "user", "content": content},
         ],
         text_format=ExplainerOutput,

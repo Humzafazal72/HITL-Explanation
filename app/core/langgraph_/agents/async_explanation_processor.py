@@ -8,11 +8,7 @@ from core.langgraph_.schema import (
     TTSInput,
     SnippetGeneratorOutput,
 )
-from llm.prompts import (
-    PROMPTER_SYSTEM_PROMPT,
-    SNIPPET_GENERATOR_SYSTEM_PROMPT,
-    TTS_PREPROCESSOR_SYSTEM_PROMPT,
-)
+from llm.prompts import PromptManager
 
 
 async def async_explanation_processor(state: AgentState):
@@ -23,11 +19,19 @@ async def async_explanation_processor(state: AgentState):
     :param state: The current state of the agent
     :type state: AgentState
     """
+    pm = PromptManager(type_="prompter")
+    prompter_system_prompt = pm.get_system_prompt()
+
+    pm = PromptManager(type_="snippet_generator")
+    snippet_generator_system_prompt = pm.get_system_prompt()
+
+    pm = PromptManager(type_="tts_preprocessor")
+    tts_preprocessor_system_prompt = pm.get_system_prompt()
 
     # converts each explanation step into a prompt for the coder.
     prompter_prompt = f"Concept: {state['concept']}\nExplanation Steps: {str(state['explainer_output']['steps'])}"
     prompter_config = {
-        "system_instruction": PROMPTER_SYSTEM_PROMPT,
+        "system_instruction": prompter_system_prompt,
         "response_mime_type": "application/json",
         "response_schema": PrompterOutput,
     }
@@ -35,7 +39,7 @@ async def async_explanation_processor(state: AgentState):
     # converts the explanation into tts friendly content.
     tts_preprocessor_prompt = state["explainer_output"]["steps"]
     tts_preprocessor_config = {
-        "system_instruction": TTS_PREPROCESSOR_SYSTEM_PROMPT,
+        "system_instruction": tts_preprocessor_system_prompt,
         "response_mime_type": "application/json",
         "response_schema": TTSInput,
     }
@@ -45,7 +49,7 @@ async def async_explanation_processor(state: AgentState):
         f"Concept: {state['concept']}\nExplanation: {str(state['explainer_output'])}"
     )
     snippet_generator_config = {
-        "system_instruction": SNIPPET_GENERATOR_SYSTEM_PROMPT,
+        "system_instruction": snippet_generator_system_prompt,
         "response_mime_type": "application/json",
         "response_schema": SnippetGeneratorOutput,
     }

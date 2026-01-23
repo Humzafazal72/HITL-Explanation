@@ -1,6 +1,6 @@
 from core.langgraph_.schema import AgentState
 from core.langgraph_.utils import code_generator, get_contextual_prompt
-from llm.prompts import FIXER_SYSTEM_PROMPT
+from llm.prompts import PromptManager
 
 
 async def async_fig_fixer(state: AgentState):
@@ -31,7 +31,10 @@ async def async_fig_fixer(state: AgentState):
             }
         )
 
-    config = {"system_instruction": FIXER_SYSTEM_PROMPT}
+    pm = PromptManager(type_="code_fixer")
+    fixer_system_prompt = pm.get_system_prompt()
+
+    config = {"system_instruction": fixer_system_prompt}
 
     results = await code_generator(prompts=prompts, config=config)
     return {"async_fig_fixer_output": results}

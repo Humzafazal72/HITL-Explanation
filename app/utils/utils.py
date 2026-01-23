@@ -1,7 +1,6 @@
 import os
 import json
 import boto3
-import socket
 from typing import Any, List
 from pydantic import BaseModel
 from botocore.config import Config

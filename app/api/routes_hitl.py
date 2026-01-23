@@ -4,8 +4,8 @@ from langgraph.types import Command
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 
-from utils import sse_response, to_json_safe, get_graph
 from schema import ResumePayload
+from utils import sse_response, to_json_safe, get_graph
 
 router = APIRouter()
 
