@@ -20,7 +20,7 @@ async def add_to_cloud(concept_id: int, db=Depends(get_explanation_db)):
     snippets = graph_state["snippet_generator_output"]
     tts = graph_state["tts_preprocessor_output"]["output"]
 
-    upload_diagrams(str(concept_id))
+    upload_diagrams(concept_id)
 
     await add_to_explanation_db(
         explainer_output=explanation,

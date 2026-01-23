@@ -15,3 +15,9 @@ google-genai==1.46.0
 aiosqlite==0.21.0
 langgraph-checkpoint-sqlite==2.0.11
 boto3==1.42.31
+libsql==0.1.11
+libsql-client==0.3.1
+langgraph-checkpoint-postgres==3.0.3
+psycopg==3.3.2
+psycopg-binary==3.3.2
+psycopg-pool==3.3.0

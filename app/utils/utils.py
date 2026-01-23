@@ -1,13 +1,13 @@
 import os
 import json
 import boto3
-from pathlib import Path
+import socket
 from typing import Any, List
 from pydantic import BaseModel
 from botocore.config import Config
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from urllib.parse import urlparse, urlunparse
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
-from database import get_explanation_db
 from core.langgraph_.Workflow import workflow_hitl
 
 TIGRIS_ENDPOINT = os.environ.get("TIGRIS_STORAGE_ENDPOINT")
@@ -53,9 +53,17 @@ def to_json_safe(obj: Any):
 
 async def get_graph():
     """initiate the langgraph graph and create the sqlite checkpointer"""
-    turso_conn_string = f"{os.getenv('TURSO_CHECKPOINT_DB_URL')}?authToken={os.getenv('TURSO_CHECKPOINT_DB_TOKEN')}"
-    cm = AsyncSqliteSaver.from_conn_string(turso_conn_string)
+    postgre_conn_string = os.getenv("SUPABASE_DB_URL")
+    # parsed = urlparse(original_conn_string)
+
+    # print(parsed)
+    # ipv4_ip = socket.getaddrinfo(parsed.hostname, None, family=socket.AF_INET)[0][4][0]
+    # new_netloc = parsed.netloc.replace(parsed.hostname, ipv4_ip)
+    # ipv4_conn_string = urlunparse(parsed._replace(netloc=new_netloc))
+
+    cm = AsyncPostgresSaver.from_conn_string(postgre_conn_string)
     checkpointer = await cm.__aenter__()
+    await checkpointer.setup()
     graph = workflow_hitl.compile(checkpointer=checkpointer)
     return graph, cm
 

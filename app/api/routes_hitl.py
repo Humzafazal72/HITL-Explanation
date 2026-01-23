@@ -13,7 +13,6 @@ router = APIRouter()
 @router.get("/api/start_agent_hitl")
 async def start_agent_hitl(concept: str = Query(...)):
     graph_app, cm = await get_graph()
-
     concept_id = random.randint(0, 100000) + random.randint(0, 90000)
 
     config = {"configurable": {"thread_id": concept_id}}
@@ -69,10 +68,11 @@ async def resume_agent_hitl(data: ResumePayload):
                 if description == "delete":
                     to_delete.append(fig)
 
+        print("To Delete: ",to_delete)
         # remove the figures from the change descriptions that are to be deleted
         for fig in to_delete:
             del data.decision.change_descriptions[fig]
-
+        
         # delete the figure to be deleted from the storage
         for fig in to_delete:
             os.remove(f"Storage/{str(data.concept_id)}/{fig}.png")
@@ -80,6 +80,8 @@ async def resume_agent_hitl(data: ResumePayload):
         # after deletion if no changes left set change to False
         if not data.decision.change_descriptions:
             data.decision.change = False
+        
+        print("DATA: ",data)
 
     async def event_generator():
         try:

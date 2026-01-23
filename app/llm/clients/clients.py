@@ -1,11 +1,6 @@
-import os
 from openai import OpenAI
 from google import genai
 from openai import AsyncOpenAI
-
-from dotenv import load_dotenv
-
-load_dotenv()
 
 openai_client = OpenAI()
 google_client = genai.Client()

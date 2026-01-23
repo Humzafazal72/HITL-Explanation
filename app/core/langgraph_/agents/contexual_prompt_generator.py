@@ -11,9 +11,9 @@ def contextual_prompt_generator(state: AgentState):
     :type state: AgentState
     """
 
-    prompts = state["prompter_output"].prompts
+    prompts = state["prompter_output"]["prompts"]
     contextual_prompts = []
-    concept_id = str(state['concept_id'])
+    concept_id = state['concept_id']
 
     # create the directory for the concept.
     os.makedirs(f"Storage/{concept_id}", exist_ok=True)
