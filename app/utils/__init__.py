@@ -3,5 +3,6 @@ from .utils import (
     to_json_safe,
     upload_diagrams,
     add_to_explanation_db,
-    get_graph
+    get_graph,
+    encode_image
 )

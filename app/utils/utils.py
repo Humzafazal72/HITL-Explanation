@@ -1,10 +1,11 @@
 import os
 import json
 import boto3
+import base64
+from pathlib import Path
 from typing import Any, List
 from pydantic import BaseModel
 from botocore.config import Config
-from urllib.parse import urlparse, urlunparse
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
 from core.langgraph_.Workflow import workflow_hitl
@@ -50,16 +51,19 @@ def to_json_safe(obj: Any):
     return obj
 
 
+def encode_image(path: Path):
+    """Encode image to base64 string"""
+    try:
+        with open(path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode()
+        return encoded
+    except Exception as e:
+        print(f"Error encoding image {path}: {e}")
+        return None
+
 async def get_graph():
     """initiate the langgraph graph and create the sqlite checkpointer"""
     postgre_conn_string = os.getenv("SUPABASE_DB_URL")
-    # parsed = urlparse(original_conn_string)
-
-    # print(parsed)
-    # ipv4_ip = socket.getaddrinfo(parsed.hostname, None, family=socket.AF_INET)[0][4][0]
-    # new_netloc = parsed.netloc.replace(parsed.hostname, ipv4_ip)
-    # ipv4_conn_string = urlunparse(parsed._replace(netloc=new_netloc))
-
     cm = AsyncPostgresSaver.from_conn_string(postgre_conn_string)
     checkpointer = await cm.__aenter__()
     await checkpointer.setup()
