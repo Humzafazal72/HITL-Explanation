@@ -1,3 +1,4 @@
+import shutil
 from fastapi import APIRouter, Depends
 
 from utils import get_graph, upload_diagrams, add_to_explanation_db
@@ -32,6 +33,8 @@ async def add_to_cloud(concept_id: int, db=Depends(get_explanation_db)):
             snippets_data=snippets,
             db=db,
         )
+
+        shutil.rmtree(f"Storage/{str(concept_id)}")
 
         return {"status": "200", "data": "Data uploaded to the cloud successfully!"}
 

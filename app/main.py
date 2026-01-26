@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from api.hitl import start_agent, resume_agent
 from fastapi import FastAPI
-from api.crud import get_data, cloud_upload
 from fastapi.responses import JSONResponse
+
+from api.crud import get_data, cloud_upload
+from api.hitl import start_agent, resume_agent
 
 app = FastAPI()
 
