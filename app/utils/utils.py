@@ -86,10 +86,8 @@ def upload_diagrams(concept_id: str):
     for file_name in os.listdir(directory_path):
         local_path = os.path.join(directory_path, file_name)
         bucket_name = "explanation-dev"
-        target_folder = f"Diagrams/{concept_id}"
-        response = s3_client.upload_file(
-            local_path, bucket_name, target_folder, file_name
-        )
+        s3_key = f"Diagrams/{concept_id}/{file_name}"
+        response = s3_client.upload_file(local_path, bucket_name, s3_key)
 
 
 async def add_to_explanation_db(
@@ -134,27 +132,27 @@ async def add_to_explanation_db(
     for tts_num, tts_text in enumerate(tts_data):
         await db.execute(
             "INSERT INTO tts_steps(lesson_id, tts_text, step_num) VALUES(?,?,?)",
-            (concept_id,  tts_text, tts_num)
+            (concept_id, tts_text, tts_num),
         )
-    
+
     # insert context snippets
-    for snippet_num,snippet_text in enumerate(snippets_data["context_snippets"]):
+    for snippet_num, snippet_text in enumerate(snippets_data["context_snippets"]):
         await db.execute(
             "INSERT INTO context_snippets(lesson_id, snippet_text, snippet_num) VALUES(?,?,?)",
-            (concept_id, snippet_text, snippet_num)
+            (concept_id, snippet_text, snippet_num),
         )
 
     # insert conlusion snippets
-    for snippet_num,snippet_text in enumerate(snippets_data["conclusion_snippets"]):
+    for snippet_num, snippet_text in enumerate(snippets_data["conclusion_snippets"]):
         await db.execute(
             "INSERT INTO conclusion_snippets(lesson_id, snippet_text, snippet_num) VALUES(?,?,?)",
-            (concept_id, snippet_text, snippet_num)
+            (concept_id, snippet_text, snippet_num),
         )
-    
-    #insert explanation steps snippets
-    for step_num,snippet_lists in enumerate(snippets_data["step_snippets"]):
-        for snippet_num,snippet_text in enumerate(snippet_lists):
+
+    # insert explanation steps snippets
+    for step_num, snippet_lists in enumerate(snippets_data["step_snippets"]):
+        for snippet_num, snippet_text in enumerate(snippet_lists):
             await db.execute(
                 "INSERT INTO step_snippets(lesson_id, step_num, snippet_num, snippet_text) VALUES(?,?,?,?)",
-                (concept_id, step_num, snippet_num, snippet_text)
+                (concept_id, step_num, snippet_num, snippet_text),
             )

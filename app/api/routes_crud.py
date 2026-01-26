@@ -7,12 +7,13 @@ from database import get_explanation_db
 router = APIRouter()
 
 
-@router.post("/api/add_to_cloud")
+@router.post("/api/add_to_cloud/")
 async def add_to_cloud(concept_id: int, db=Depends(get_explanation_db)):
     graph_app, cm = await get_graph()
     config = {"configurable": {"thread_id": concept_id}}
 
-    graph_state = graph_app.get_state(config=config)
+    graph_state = await graph_app.aget_state(config=config)
+    graph_state = graph_state.values
 
     concept_name = graph_state["concept"]
     concept_id = graph_state["concept_id"]
@@ -20,13 +21,17 @@ async def add_to_cloud(concept_id: int, db=Depends(get_explanation_db)):
     snippets = graph_state["snippet_generator_output"]
     tts = graph_state["tts_preprocessor_output"]["output"]
 
-    upload_diagrams(concept_id)
+    print("printing diagram")
+    upload_diagrams(str(concept_id))
+    print("diagram printed")
 
+    print("adding explanation to db")
     await add_to_explanation_db(
         explainer_output=explanation,
         concept_id=int(concept_id),
         concept_name=concept_name,
         tts_data=tts,
         snippets_data=snippets,
-        db = db
+        db=db,
     )
+    print("explanation added to db")
