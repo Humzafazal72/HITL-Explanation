@@ -21,3 +21,5 @@ langgraph-checkpoint-postgres==3.0.3
 psycopg==3.3.2
 psycopg-binary==3.3.2
 psycopg-pool==3.3.0
+e2b==2.10.1
+e2b-code-interpreter==2.4.1
