@@ -46,6 +46,8 @@ async def resume_agent_hitl(data: ResumePayload):
                 Command(resume=data.decision), config=config
             ):
                 for node_name, node_output in event.items():
+                    print("node name: ",node_name )
+                    print("node name: ",node_output )
                     last_node_executed = node_name
                     yield sse_response(
                         event=node_name,

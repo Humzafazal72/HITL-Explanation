@@ -31,8 +31,6 @@ def contextual_prompt_generator(state: AgentState):
                     p
                     + "\nfigure name: "
                     + f"fig_{i}"
-                    + "\n folder name:"
-                    + concept_id
                     if i == 0 # for the first prompt we don't need any context for previous prompts.
                     else "<Older Prompts/Explanation Steps>\n" 
                     + "\n".join(prompts[:i])
@@ -40,8 +38,6 @@ def contextual_prompt_generator(state: AgentState):
                     + p
                     + "\nfigure name:"
                     + f"fig_{i}"
-                    + "\n folder name:"
-                    + concept_id
                 ),
             }
         )

@@ -14,6 +14,7 @@ async def async_fig_fixer(state: AgentState):
     contextual_prompts = state["contextual_prompts"].copy()
     change_descriptions = state["fig_decision"].change_descriptions
     concept = state["concept"]
+    concept_id = state["concept_id"]
 
     prompts = []
 
@@ -36,5 +37,7 @@ async def async_fig_fixer(state: AgentState):
 
     config = {"system_instruction": fixer_system_prompt}
 
-    results = await code_generator(prompts=prompts, config=config)
+    results = await code_generator(
+        prompts=prompts, config=config, concept_id=concept_id
+    )
     return {"async_fig_fixer_output": results}

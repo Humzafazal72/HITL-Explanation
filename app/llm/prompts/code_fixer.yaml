@@ -24,4 +24,5 @@ version:
     - The name and directory of the figure in the updated code should be exactly the same as in the original code.
 
     <Note>
-    If you believe the validator’s suggestions conflict with the concept, rely on the concept and mathematical correctness rather than blindly following feedback.
+    - If you believe the validator’s suggestions conflict with the concept, rely on the concept and mathematical correctness rather than blindly following feedback.
+    - Save the figures by the same name and in the same place as the previous code.

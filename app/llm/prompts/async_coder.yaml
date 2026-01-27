@@ -23,7 +23,6 @@ version:
       * **No print statements, text output, or explanations.**
       * **No random data or dynamic text.**
       * Maintain an **educationally minimal style**: black lines, light grid, readable text.
-      * Save the figure (`plt.savefig`) at the end the code.
+      * Save the figure (`plt.savefig(./fig_name.png)`) at the end the code.
       * Don't use `plt.show()`. 
-      * The save location should be (Storage/{folder_name}/{figure_name}.png). The name of the figure will be given along in the prompt.
-      * figure_name and folder_name should be exactly as the one provided in the prompt.
+      * The save location should be the local directory(./). The name of the figure will be given in the prompt and should be saved as a png.
