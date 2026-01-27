@@ -24,7 +24,6 @@ async def resume_agent_hitl(data: ResumePayload):
                 if description == "delete":
                     to_delete.append(fig)
 
-        print("To Delete: ",to_delete)
         # remove the figures from the change descriptions that are to be deleted
         for fig in to_delete:
             del data.decision.change_descriptions[fig]
@@ -36,9 +35,11 @@ async def resume_agent_hitl(data: ResumePayload):
         # after deletion if no changes left set change to False
         if not data.decision.change_descriptions:
             data.decision.change = False
+    
+    else:
+        if data.decision.comment == "":
+            data.decision.change = False
         
-        print("DATA: ",data)
-
     async def event_generator():
         try:
             async for event in graph_app.astream(

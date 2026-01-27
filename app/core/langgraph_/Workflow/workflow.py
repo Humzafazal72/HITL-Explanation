@@ -34,10 +34,10 @@ workflow_hitl.add_node("fig_reviewer", fig_reviewer)
 workflow_hitl.add_node("async_fig_fixer", async_fig_fixer)
 
 # create edges
-workflow_hitl.add_edge(START, "explainer")
-workflow_hitl.add_edge("explainer", "explanation_reviewer")
-# workflow_hitl.add_edge(START,"dummy")
-# workflow_hitl.add_edge("dummy", "explanation_reviewer")
+# workflow_hitl.add_edge(START, "explainer")
+# workflow_hitl.add_edge("explainer", "explanation_reviewer")
+workflow_hitl.add_edge(START,"dummy")
+workflow_hitl.add_edge("dummy", "explanation_reviewer")
 workflow_hitl.add_conditional_edges(
     "explanation_reviewer",
     explaination_decision_controller,

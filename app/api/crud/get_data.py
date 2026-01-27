@@ -6,7 +6,7 @@ from utils import get_graph, encode_image
 router = APIRouter()
 
 
-@router.get("/api/get_data/")
+@router.get("/crud/get_data/")
 async def get_data(concept_id: int = Query(), diagrams: bool = Query(default=True)):
     try:
         graph_app, cm = await get_graph()

@@ -36,7 +36,7 @@ async function startGeneration() {
   addLogEntry("Starting generation process...");
 
   const eventSource = new EventSource(
-    `${API_BASE}/api/start_agent_hitl?concept=${encodeURIComponent(concept)}`,
+    `${API_BASE}/hitl/start_agent_hitl?concept=${encodeURIComponent(concept)}`,
   );
   currentEventSource = eventSource;
 
@@ -99,46 +99,75 @@ function handleSSEMessage(event) {
   // Generic message handler
 }
 
-function handleInterrupt(data) {
+async function handleInterrupt(data) {
   currentEventSource.close();
 
   if (data.payload && data.payload.type === "explanation") {
-    showExplanationReview(data.payload);
+    await showExplanationReview();
   } else if (data.payload && data.payload.type === "figure") {
     showFigureReview(data.payload);
   }
 }
 
-function showExplanationReview(payload) {
-  explanationData = payload.data;
+async function showExplanationReview() {
+  try {
+    // Fetch explanation data from the API
+    const response = await fetch(
+      `${API_BASE}/crud/get_data/?concept_id=${currentConceptId}&diagrams=false`,
+    );
+    const data = await response.json();
 
-  const content = document.getElementById("explanationContent");
-  let stepsHTML = "";
+    // Store for later use
+    explanationData = data;
+    stepsWithFigures = data.steps;
 
-  if (explanationData.steps && Array.isArray(explanationData.steps)) {
-    explanationData.steps.forEach((step, index) => {
-      stepsHTML += `<li>${step}</li>`;
+    const content = document.getElementById("explanationContent");
+
+    // Build steps HTML with figures
+    let stepsHTML = "";
+    data.steps.forEach((step, index) => {
+      stepsHTML += `
+                        <li>
+                            <p>${step.text}</p>
+                            ${
+                              step.figure
+                                ? `
+                                <div style="margin: 15px 0; text-align: center;">
+                                    <img src="data:image/png;base64,${step.figure}" 
+                                         alt="Figure ${index}" 
+                                         style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <p style="font-size: 0.9em; color: #666; margin-top: 8px;">Figure ${index + 1}</p>
+                                </div>
+                            `
+                                : ""
+                            }
+                        </li>
+                    `;
     });
+
+    content.innerHTML = `
+                    <div class="explanation-section">
+                        <h3>Context</h3>
+                        <p>${data.context || "N/A"}</p>
+                    </div>
+                    <div class="explanation-section">
+                        <h3>Explanation Steps</h3>
+                        <ol style="list-style-position: outside;">
+                            ${stepsHTML}
+                        </ol>
+                    </div>
+                    <div class="explanation-section">
+                        <h3>Conclusion</h3>
+                        <p>${data.conclusion || "N/A"}</p>
+                    </div>
+                `;
+
+    showScreen("explanationReviewScreen");
+  } catch (error) {
+    console.error("Error fetching explanation data:", error);
+    addLogEntry("Error loading explanation data: " + error.message);
+    alert("Error loading explanation. Please try again.");
   }
-
-  content.innerHTML = `
-                <div class="explanation-section">
-                    <h3>Context</h3>
-                    <p>${explanationData.context || "N/A"}</p>
-                </div>
-                <div class="explanation-section">
-                    <h3>Explanation Steps</h3>
-                    <ol>
-                        ${stepsHTML}
-                    </ol>
-                </div>
-                <div class="explanation-section">
-                    <h3>Conclusion</h3>
-                    <p>${explanationData.conclusion || "N/A"}</p>
-                </div>
-            `;
-
-  showScreen("explanationReviewScreen");
 }
 
 function toggleExplanationComment() {
@@ -168,7 +197,7 @@ async function submitExplanationReview() {
   showScreen("processingScreen");
   addLogEntry("Submitting explanation review...");
 
-  const response = await fetch(`${API_BASE}/api/resume_agent_hitl`, {
+  const response = await fetch(`${API_BASE}/hitl/resume_agent_hitl`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -194,9 +223,9 @@ async function submitExplanationReview() {
           const eventData = JSON.parse(dataMatch[1]);
 
           if (eventName === "__interrupt__") {
-            handleInterrupt(eventData);
+            await handleInterrupt(eventData);
           } else if (eventName === "__END__") {
-            showFinalReview();
+            await showFinalReview();
           } else {
             addLogEntry(`Processing ${eventName}...`, eventName);
           }
@@ -277,7 +306,7 @@ async function submitFigureReview() {
   showScreen("processingScreen");
   addLogEntry("Submitting figure review...");
 
-  const response = await fetch(`${API_BASE}/api/resume_agent_hitl`, {
+  const response = await fetch(`${API_BASE}/hitl/resume_agent_hitl`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -303,9 +332,9 @@ async function submitFigureReview() {
           const eventData = JSON.parse(dataMatch[1]);
 
           if (eventName === "__interrupt__") {
-            handleInterrupt(eventData);
+            await handleInterrupt(eventData);
           } else if (eventName === "__END__") {
-            showFinalReview();
+            await showFinalReview();
           } else {
             addLogEntry(`Processing ${eventName}...`, eventName);
           }
@@ -319,7 +348,7 @@ async function showFinalReview() {
   // Fetch data with diagrams using the new endpoint
   try {
     const response = await fetch(
-      `${API_BASE}/api/get_data/?concept_id=${currentConceptId}&diagrams=true`,
+      `${API_BASE}/crud/get_data/?concept_id=${currentConceptId}&diagrams=true`,
     );
     const data = await response.json();
 
@@ -382,7 +411,7 @@ async function showFinalReview() {
 async function uploadToCloud() {
   try {
     const response = await fetch(
-      `${API_BASE}/api/add_to_cloud/?concept_id=${currentConceptId}`,
+      `${API_BASE}/crud/add_to_cloud/?concept_id=${currentConceptId}`,
       {
         method: "POST",
       },
