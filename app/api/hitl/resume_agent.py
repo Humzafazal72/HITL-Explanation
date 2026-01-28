@@ -53,9 +53,9 @@ async def resume_agent_hitl(data: ResumePayload):
                         event=node_name,
                         data={
                             "payload": (
-                                (to_json_safe(node_output))
-                                if node_name != "__interrupt__"
-                                else node_output[0].value
+                                node_output[0].value
+                                if node_name == "__interrupt__"
+                                else ""
                             )
                         },
                         concept_id=data.concept_id,

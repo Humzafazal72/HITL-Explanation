@@ -1,6 +1,7 @@
 import random
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
+from sse_starlette import EventSourceResponse
 
 from utils import sse_response, to_json_safe, get_graph
 
@@ -42,9 +43,9 @@ async def start_agent_hitl(concept: str = Query(...)):
                         event=node_name,
                         data={
                             "payload": (
-                                to_json_safe(node_output)
-                                if node_name != "__interrupt__"
-                                else node_output[0].value
+                                node_output[0].value
+                                if node_name == "__interrupt__"
+                                else ""
                             )
                         },
                         concept_id=concept_id,
