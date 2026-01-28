@@ -15,7 +15,7 @@ TIGRIS_ACCESS_KEY = os.environ.get("TIGRIS_STORAGE_ACCESS_KEY_ID")
 TIGRIS_SECRET_KEY = os.environ.get("TIGRIS_STORAGE_SECRET_ACCESS_KEY")
 
 
-def sse_response(event: str, data: dict, concept_id: str):
+def sse_response(event: str, data: dict = {"":""}, concept_id: str= None):
     """
     Generate SSE compatible response for the client
 
