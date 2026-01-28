@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/crud/add_to_cloud/")
-async def add_to_cloud(concept_id: int, db=Depends(get_explanation_db)):
+async def add_to_cloud(concept_id, db=Depends(get_explanation_db)):
     try:
         graph_app, cm = await get_graph()
         config = {"configurable": {"thread_id": concept_id}}

@@ -4,13 +4,13 @@ from core.langgraph_.schema import ExplanationDecision, FigureDecision
 
 
 class ExplanationResume(BaseModel):
-    concept_id: int
+    concept_id: str
     type: Literal["explanation"]
     decision: ExplanationDecision
 
 
 class FigureResume(BaseModel):
-    concept_id: int
+    concept_id: str
     type: Literal["figure"]
     decision: FigureDecision
 

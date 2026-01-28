@@ -57,7 +57,7 @@ async def code_generator(
                 prompt=prompt,
                 google_client=google_client,
                 config=config,
-                model="gemini-2.5-pro",
+                model="gemini-3-pro-preview",
             )
             parsed_code = parse_code(response.text)
             parsed_code = 'import matplotlib\nmatplotlib.use("Agg")\n' + parsed_code

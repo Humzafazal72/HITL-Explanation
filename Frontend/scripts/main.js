@@ -57,6 +57,7 @@ async function startGeneration() {
   eventSource.addEventListener("__interrupt__", (event) => {
     const data = JSON.parse(event.data);
     currentConceptId = data.concept_id;
+    console.log("Interrupt received:", data);
     handleInterrupt(data);
   });
 

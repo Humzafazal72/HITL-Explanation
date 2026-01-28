@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mathematics Explanation Generator</title>
+    <link rel="stylesheet" href="static/style1.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Mathematics Explanation Generator</h1>
+        <p class="subtitle">Internal Tool for Content Creation</p>
+      </header>
+
+      <!-- Initial Form Screen -->
+      <div id="initialScreen" class="screen active">
+        <div class="form-container">
+          <h2>Generate New Explanation</h2>
+          <div id="conceptFormWrapper">
+            <div class="form-group">
+              <label for="conceptInput">Concept/Lesson Name</label>
+              <input
+                type="text"
+                id="conceptInput"
+                placeholder="e.g., Pythagorean Theorem"
+                required
+              />
+            </div>
+            <button type="button" id="generateBtn" class="btn btn-primary">
+              Generate Explanation
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Screen -->
+      <div id="loadingScreen" class="screen">
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <p id="loadingMessage">Generating explanation...</p>
+        </div>
+      </div>
+
+      <!-- Explanation Review Screen -->
+      <div id="explanationReviewScreen" class="screen">
+        <div class="review-container">
+          <h2>Review Generated Explanation</h2>
+          <div id="explanationContent" class="explanation-content">
+            <!-- Context -->
+            <div class="section">
+              <h3>Context</h3>
+              <p id="contextText"></p>
+            </div>
+
+            <!-- Steps -->
+            <div class="section">
+              <h3>Explanation Steps</h3>
+              <div id="stepsContainer"></div>
+            </div>
+
+            <!-- Conclusion -->
+            <div class="section">
+              <h3>Conclusion</h3>
+              <p id="conclusionText"></p>
+            </div>
+          </div>
+
+          <div class="review-actions">
+            <div class="checkbox-group">
+              <input type="checkbox" id="explanationChangeCheckbox" />
+              <label for="explanationChangeCheckbox"
+                >I want to make changes to the explanation</label
+              >
+            </div>
+
+            <div id="explanationCommentBox" class="comment-box hidden">
+              <label for="explanationComment">Your comments:</label>
+              <textarea
+                id="explanationComment"
+                rows="4"
+                placeholder="Describe the changes you'd like to make..."
+              ></textarea>
+            </div>
+
+            <button
+              type="button"
+              id="submitExplanationReview"
+              class="btn btn-primary"
+            >
+              Submit Review
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Figure Review Screen -->
+      <div id="figureReviewScreen" class="screen">
+        <div class="review-container">
+          <h2>Review Generated Figures</h2>
+          <div id="figureContent" class="explanation-content">
+            <!-- Context -->
+            <div class="section">
+              <h3>Context</h3>
+              <p id="figureContextText"></p>
+            </div>
+
+            <!-- Steps with Figures -->
+            <div class="section">
+              <h3>Explanation Steps with Figures</h3>
+              <div id="figureStepsContainer"></div>
+            </div>
+
+            <!-- Conclusion -->
+            <div class="section">
+              <h3>Conclusion</h3>
+              <p id="figureConclusionText"></p>
+            </div>
+          </div>
+
+          <div class="review-actions">
+            <button
+              type="button"
+              id="submitFigureReview"
+              class="btn btn-primary"
+            >
+              Submit Review
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final Review Screen -->
+      <div id="finalReviewScreen" class="screen">
+        <div class="review-container">
+          <h2>Final Review - Ready to Upload</h2>
+          <div id="finalContent" class="explanation-content">
+            <!-- Context -->
+            <div class="section">
+              <h3>Context</h3>
+              <p id="finalContextText"></p>
+            </div>
+
+            <!-- Steps with Figures -->
+            <div class="section">
+              <h3>Explanation Steps with Figures</h3>
+              <div id="finalStepsContainer"></div>
+            </div>
+
+            <!-- Conclusion -->
+            <div class="section">
+              <h3>Conclusion</h3>
+              <p id="finalConclusionText"></p>
+            </div>
+          </div>
+
+          <div class="review-actions">
+            <button id="uploadToCloud" class="btn btn-success">
+              Upload to Cloud
+            </button>
+            <button id="startOver" class="btn btn-secondary">Start Over</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Screen -->
+      <div id="successScreen" class="screen">
+        <div class="success-container">
+          <div class="success-icon">✓</div>
+          <h2>Upload Successful!</h2>
+          <p>Your explanation has been uploaded to the cloud successfully.</p>
+          <button id="createAnother" class="btn btn-primary">
+            Create Another Explanation
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Display -->
+      <div id="errorMessage" class="error-message hidden"></div>
+    </div>
+
+    <script src="scripts/main1.js"></script>
+  </body>
+</html>
