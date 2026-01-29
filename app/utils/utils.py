@@ -16,7 +16,7 @@ TIGRIS_ACCESS_KEY = os.environ.get("TIGRIS_STORAGE_ACCESS_KEY_ID")
 TIGRIS_SECRET_KEY = os.environ.get("TIGRIS_STORAGE_SECRET_ACCESS_KEY")
 
 
-def sse_response(event: str, data: dict = {"":""}, concept_id: str= None):
+def sse_response(event: str, data: dict = {"": ""}, concept_id: str = None):
     """
     Generate SSE compatible response for the client
 
@@ -61,6 +61,7 @@ def encode_image(path: Path):
     except Exception as e:
         print(f"Error encoding image {path}: {e}")
         return None
+
 
 async def get_graph():
     """initiate the langgraph graph and create the sqlite checkpointer"""
@@ -161,6 +162,7 @@ async def add_to_explanation_db(
                 "INSERT INTO step_snippets(lesson_id, step_num, snippet_num, snippet_text) VALUES(?,?,?,?)",
                 (concept_id, step_num, snippet_num, snippet_text),
             )
+
 
 def remove_figures(concept_id: str):
     try:
