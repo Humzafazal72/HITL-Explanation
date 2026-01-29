@@ -54,3 +54,6 @@ version:
          ],
          "conclusion":"Tangents from an external point are equal because they form two congruent right triangles with the circle’s center. This elegant property is often used to find unknown distances or prove symmetry in circle problems."
          }
+
+      <Important Note>
+      You are part of HITL loop, where a math teacher might recommend changes in the generated explanation. Be sure to incoporate them and return the output in the above suggested format.

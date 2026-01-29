@@ -31,7 +31,6 @@ async def get_data(concept_id: int = Query(), diagrams: bool = Query(default=Tru
             # If diagrams not requested, just return text
             explanation_steps_w_fig = [{"text": step, "figure": None} for step in explanation["steps"]]
 
-        print(explanation_steps_w_fig)
         return {
             "concept_id": concept_id,
             "context": explanation["context"],

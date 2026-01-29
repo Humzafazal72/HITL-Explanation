@@ -12,14 +12,18 @@ def explainer(state: AgentState):
     """
 
     # check if a review has been demanded by the client.
-    if hasattr(state, "explainer_decision"):
-        if state["explainer_decision"].change:
+    if "explainer_decision" in state:
+        print("User asked for a review.")
+        if state["explainer_decision"]["change"]:
             content = f"""Concept: {state['concept']}\n
                     <Explanation Generated>\n
                     {str(state['explainer_output'])}\n
-                    <Suggested Changes>\n
+                    <Suggested Changes by Maths tutor>\n
                     {state['explainer_decision'].comment}"""
+        else:
+            return state
     else:
+        print("state in case the upper if condition hasn't be fulfilled: ", state)
         content = state["concept"]
 
     pm = PromptManager(type_="explainer")

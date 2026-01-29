@@ -40,7 +40,7 @@ async def resume_agent_hitl(data: ResumePayload):
     else:
         if data.decision.comment == "":
             data.decision.change = False
-
+    
     async def event_generator():
         try:
             async for event in graph_app.astream(
