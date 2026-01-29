@@ -56,13 +56,14 @@ function initializeEventListeners() {
     .getElementById("uploadToCloud")
     .addEventListener("click", handleUploadToCloud);
 
-  // Start over and create another
   document
     .getElementById("startOver")
-    .addEventListener("click", resetToInitial);
+    .addEventListener("click", () => resetToInitial(true));
+
+  // Create another (Pass FALSE to skip deletion)
   document
     .getElementById("createAnother")
-    .addEventListener("click", resetToInitial);
+    .addEventListener("click", () => resetToInitial(false));
 }
 
 // Handle concept form submission
@@ -668,8 +669,22 @@ function showError(message) {
   }, 5000);
 }
 
-// Reset to initial state
-function resetToInitial() {
+// Updated reset function with optional deletion
+async function resetToInitial(shouldDelete = false) {
+  
+  // Only call API if shouldDelete is true AND we have an ID
+  if (shouldDelete && currentConceptId) {
+    try {
+      console.log(`Deleting figures for concept: ${currentConceptId}`);
+      await fetch(`${API_BASE_URL}/crud/delete_figures?concept_id=${currentConceptId}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Error cleaning up figures:", error);
+    }
+  }
+
+  // Clear Local State
   currentConceptId = null;
   currentConceptName = null;
   figureChangeDescriptions = {};
