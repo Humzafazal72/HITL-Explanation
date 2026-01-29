@@ -4,5 +4,6 @@ from .utils import (
     upload_diagrams,
     add_to_explanation_db,
     get_graph,
-    encode_image
+    encode_image,
+    remove_figures
 )

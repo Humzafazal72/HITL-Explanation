@@ -2,6 +2,7 @@ import os
 import json
 import boto3
 import base64
+import shutil
 from pathlib import Path
 from typing import Any, List
 from pydantic import BaseModel
@@ -160,3 +161,10 @@ async def add_to_explanation_db(
                 "INSERT INTO step_snippets(lesson_id, step_num, snippet_num, snippet_text) VALUES(?,?,?,?)",
                 (concept_id, step_num, snippet_num, snippet_text),
             )
+
+def remove_figures(concept_id: str):
+    try:
+        shutil.rmtree(f"Storage/{concept_id}")
+        return
+    except Exception as e:
+        raise Exception("Something went wrong")
