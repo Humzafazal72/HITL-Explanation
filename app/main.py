@@ -26,5 +26,5 @@ app.add_middleware(
 )
 
 @app.get("/")
-async def startup():
+async def health():
     return JSONResponse(content="App started Successfully", status_code=200)
