@@ -99,6 +99,11 @@ def upload_diagrams(concept_id: str):
 async def add_to_explanation_db(
     explainer_output: dict,
     concept_id: int,
+    lesson_num: int,
+    chapter_name: str,
+    chapter_num: int,
+    grade: str,
+    sublessons: List[str],
     concept_name: str,
     tts_data: List[str],
     snippets_data: dict,
@@ -116,7 +121,7 @@ async def add_to_explanation_db(
     """
 
     await db.execute(
-        "INSERT INTO lessons(ID, name) VALUES(?,?)", (concept_id, concept_name)
+        "INSERT INTO lessons(ID, index, name, Chp_num, chp_class) VALUES(?,?)", (concept_id, lesson_num, concept_name, chapter_num, grade)
     )
     await db.execute(
         "INSERT INTO conclusions(lesson_id, conclusion_text) VALUES(?,?)",
@@ -126,6 +131,13 @@ async def add_to_explanation_db(
         "INSERT INTO contexts(lesson_id, context_text) VALUES(?,?)",
         (concept_id, explainer_output["context"]),
     )
+
+    # insert sublessons one by one
+    for sublesson in sublessons:
+        await db.execute(
+            "INSERT INTO explanation_steps(lesson_id, name) VALUES(?,?)",
+            (concept_id, sublesson),
+        )
 
     # insert explanation steps one by one
     for step_num, step_text in enumerate(explainer_output["steps"]):

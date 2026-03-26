@@ -5,15 +5,23 @@ from fastapi import APIRouter, Query
 from sse_starlette import EventSourceResponse
 
 from utils import get_graph
+from schema import ExplanationStart
 
 router = APIRouter()
 
 
-@router.get("/hitl/start_agent_hitl")
-async def start_agent_hitl(concept: str = Query(...)):
+@router.post("/hitl/start_agent_hitl")
+async def start_agent_hitl(start_info: ExplanationStart):
     graph_app, cm = await get_graph()
     concept_id = str(random.randint(0, 100000) + random.randint(0, 90000))
     config = {"configurable": {"thread_id": concept_id}}
+
+    concept = start_info.concept
+    lesson_num = start_info.lesson_num
+    chapter_name = start_info.chapter_name
+    chapter_num = start_info.chapter_num
+    grade = start_info.grade
+    sublessons = start_info.sublessons
 
     # dummy data
     # state = {
@@ -60,7 +68,15 @@ async def start_agent_hitl(concept: str = Query(...)):
     #     },
     # }
 
-    state = {"concept": concept, "concept_id": str(concept_id)}
+    state = {
+        "concept": concept,
+        "lesson_num":lesson_num,
+        "concept_id": str(concept_id),
+        "chapter_name": chapter_name,
+        "chapter_num": chapter_num,
+        "grade": grade,
+        "sublessons": sublessons,
+    }
 
     async def event_generator():
         try:
@@ -81,6 +97,7 @@ async def start_agent_hitl(concept: str = Query(...)):
             await cm.__aexit__(None, None, None)
 
     return EventSourceResponse(event_generator(), media_type="text/event-stream")
+
 
 # @router.get("/hitl/start_agent_hitl")
 # async def start_agent_hitl(concept: str = Query(...)):
@@ -137,16 +154,16 @@ async def start_agent_hitl(concept: str = Query(...)):
 #         try:
 #             # Convert astream to an async iterator we can timeout
 #             stream_iter = graph_app.astream(input=state, config=config).__aiter__()
-            
+
 #             while True:
 #                 try:
 #                     # Try to get next event with 10 second timeout
 #                     event = await asyncio.wait_for(stream_iter.__anext__(), timeout=10.0)
-                    
+
 #                     for node_name, node_output in event.items():
 #                         print("node name: ", node_name)
 #                         print("node output: ", node_output)
-                        
+
 #                         yield {
 #                             "event": node_name,
 #                             "id": concept_id,
@@ -154,7 +171,7 @@ async def start_agent_hitl(concept: str = Query(...)):
 #                                 {"": ""} if node_name != "__interrupt__" else node_output[0].value
 #                             ),
 #                         }
-                        
+
 #                 except asyncio.TimeoutError:
 #                     # No event in 10 seconds, send heartbeat
 #                     print("Sending heartbeat")
@@ -163,12 +180,12 @@ async def start_agent_hitl(concept: str = Query(...)):
 #                         "id": concept_id,
 #                         "data": json.dumps({"status": "processing"})
 #                     }
-                    
+
 #                 except StopAsyncIteration:
 #                     # Stream ended normally
 #                     print("Stream completed")
 #                     break
-                    
+
 #         finally:
 #             await cm.__aexit__(None, None, None)
 

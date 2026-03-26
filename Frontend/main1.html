@@ -17,7 +17,7 @@
       <div id="initialScreen" class="screen active">
         <div class="form-container">
           <h2>Generate New Explanation</h2>
-          <div id="conceptFormWrapper">
+          <form id="conceptFormWrapper">
             <div class="form-group">
               <label for="conceptInput">Concept/Lesson Name</label>
               <input
@@ -27,10 +27,96 @@
                 required
               />
             </div>
-            <button type="button" id="generateBtn" class="btn btn-primary">
+
+            <div class="form-group">
+              <label for="lessonNumInput">Lesson Number</label>
+              <input
+                type="number"
+                id="lessonNumInput"
+                placeholder="e.g., 1"
+                min="1"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="chapterSelect">Chapter</label>
+              <select id="chapterSelect" required>
+                <option value="" disabled selected>Select a chapter...</option>
+                <optgroup label="O-1 Chapters">
+                  <option value="1|O-1">UNDERSTANDING NUMBER</option>
+                  <option value="2|O-1">
+                    FRACTIONS, DECIMALS AND PERCENTAGES
+                  </option>
+                  <option value="3|O-1">BEGINNING ALGEBRA</option>
+                  <option value="4|O-1">WORKING WITH NUMBERS I</option>
+                  <option value="5|O-1">WORKING WITH ALGEBRA</option>
+                  <option value="6|O-1">GEOMETRY AND SHAPE I</option>
+                  <option value="7|O-1">ALGEBRA AND GRAPHS I</option>
+                  <option value="8|O-1">LENGTH, AREA AND VOLUME I</option>
+                  <option value="9|O-1">TRIGONOMETRY I</option>
+                  <option value="10|O-1">TRANSFORMATIONS AND VECTORS</option>
+                  <option value="11|O-1">STATISTICS I</option>
+                  <option value="12|O-1">AN INTRODUCTION TO PROBABILITY</option>
+                  <option value="13|O-1">REAL NUMBERS</option>
+                  <option value="14|O-1">ALGEBRA I</option>
+                </optgroup>
+                <optgroup label="O-2 Chapters">
+                  <option value="1|O-2">WORKING WITH NUMBERS II</option>
+                  <option value="2|O-2">ALGEBRA II</option>
+                  <option value="3|O-2">GEOMETRY AND SHAPE II</option>
+                  <option value="4|O-2">ALGEBRA AND GRAPHS II</option>
+                  <option value="5|O-2">LENGTH, AREA AND VOLUME II</option>
+                  <option value="6|O-2">SETS AND FUNCTIONS</option>
+                  <option value="7|O-2">TRIGONOMETRY II</option>
+                  <option value="8|O-2">
+                    TRANSFORMATIONS, VECTORS AND MATRICES
+                  </option>
+                  <option value="9|O-2">STATISTICS II</option>
+                  <option value="10|O-2">FURTHER PROBABILITY</option>
+                  <option value="11|O-2">SEQUENCES</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Sublessons</label>
+              <div id="sublessonsContainer">
+                <div class="sublesson-input-group">
+                  <input
+                    type="text"
+                    class="sublesson-input"
+                    placeholder="e.g., Finding the hypotenuse"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="btn remove-sublesson-btn"
+                    disabled
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+              <button
+                type="button"
+                id="addSublessonBtn"
+                class="btn btn-secondary btn-sm"
+                style="margin-top: 0.75rem"
+              >
+                + Add Sublesson
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              id="generateBtn"
+              class="btn btn-primary"
+              style="margin-top: 1rem; width: 100%"
+            >
               Generate Explanation
             </button>
-          </div>
+          </form>
         </div>
       </div>
 

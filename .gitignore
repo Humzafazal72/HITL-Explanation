@@ -1,4 +1,7 @@
 .env
+.vscode/
+
+frontend.zip
 
 __pycache__/
 *.py[cod]

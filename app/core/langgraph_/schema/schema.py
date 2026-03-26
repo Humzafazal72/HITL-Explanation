@@ -40,7 +40,12 @@ class ContextualPrompt(BaseModel):
 class AgentState(TypedDict):
     explainer_output: ExplainerOutput
     concept: str
+    lesson_num: int
     concept_id: str
+    chapter_name: str 
+    chapter_num: int
+    grade: str
+    sublessons: List[str]
     explainer_decision: ExplanationDecision
     prompter_output: PrompterOutput
     tts_preprocessor_output: TTSInput

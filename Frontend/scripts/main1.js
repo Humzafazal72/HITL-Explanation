@@ -1,11 +1,13 @@
 // Configuration
-const API_BASE_URL = "http://localhost:8000"; // Update this to your actual API URL
+const API_BASE_URL = "http://127.0.0.1:8000" //"https://hitl-explanation.onrender.com"; // Update this to your actual API URL
 
 // State management
 let currentConceptId = null;
 let currentConceptName = null;
 let figureChangeDescriptions = {};
 let figuresToDelete = new Set();
+let lastNodeExecuted = null;
+let workflowEnded = false;
 
 // Screen management
 const screens = {
@@ -23,10 +25,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initializeEventListeners() {
-  // Concept form submission
+  // Concept form submission (now listening to the form submit event)
   document
-    .getElementById("generateBtn")
-    .addEventListener("click", handleConceptSubmit);
+    .getElementById("conceptFormWrapper")
+    .addEventListener("submit", handleConceptSubmit);
+
+  // Dynamic Sublesson fields
+  document
+    .getElementById("addSublessonBtn")
+    .addEventListener("click", handleAddSublesson);
 
   // Explanation review checkbox
   document
@@ -66,22 +73,81 @@ function initializeEventListeners() {
     .addEventListener("click", () => resetToInitial(false));
 }
 
+// Sublesson dynamic fields handler
+function handleAddSublesson() {
+  const container = document.getElementById("sublessonsContainer");
+  const inputGroup = document.createElement("div");
+  inputGroup.className = "sublesson-input-group";
+  
+  inputGroup.innerHTML = `
+    <input type="text" class="sublesson-input" placeholder="Sublesson title" required />
+    <button type="button" class="btn remove-sublesson-btn">&times;</button>
+  `;
+  
+  // Add remove logic
+  inputGroup.querySelector(".remove-sublesson-btn").addEventListener("click", function() {
+    inputGroup.remove();
+    updateRemoveButtons();
+  });
+
+  container.appendChild(inputGroup);
+  updateRemoveButtons();
+}
+
+function updateRemoveButtons() {
+  const buttons = document.querySelectorAll(".remove-sublesson-btn");
+  buttons.forEach(btn => {
+    // Disable the delete button if there's only one sublesson left
+    btn.disabled = buttons.length === 1;
+  });
+}
+
 // Handle concept form submission
 async function handleConceptSubmit(e) {
   e.preventDefault();
+  
   const conceptInput = document.getElementById("conceptInput");
+  const lessonNumInput = document.getElementById("lessonNumInput"); // New
+  const chapterSelect = document.getElementById("chapterSelect");
+  
   currentConceptName = conceptInput.value.trim();
+  const lessonNum = parseInt(lessonNumInput.value, 10); // Convert to int
 
-  if (!currentConceptName) {
-    showError("Please enter a concept name");
+  // Extract Chapter Data
+  const chapterVal = chapterSelect.value;
+  if (!chapterVal) {
+    showError("Please select a chapter.");
     return;
   }
+  const [chapterNumStr, gradeStr] = chapterVal.split("|");
+  const chapterName = chapterSelect.options[chapterSelect.selectedIndex].text;
+  
+  // Extract Sublessons (Updated to simple list of strings)
+  const sublessonInputs = document.querySelectorAll(".sublesson-input");
+  const sublessonsList = Array.from(sublessonInputs)
+      .map(input => input.value.trim())
+      .filter(text => text !== "");
+
+  if (sublessonsList.length === 0) {
+      showError("Please provide at least one sublesson.");
+      return;
+  }
+
+  // Construct payload matching your updated Pydantic Model
+  const startPayload = {
+      concept: currentConceptName,
+      lesson_num: lessonNum,         // New integer field
+      chapter_name: chapterName,
+      chapter_num: parseInt(chapterNumStr, 10),
+      grade: gradeStr,
+      sublessons: sublessonsList     // Simple [ "string", "string" ]
+  };
 
   showScreen("loading");
   setLoadingMessage("Generating explanation...");
 
   try {
-    await startAgentHITL(currentConceptName);
+    await startAgentHITL(startPayload);
   } catch (error) {
     console.error("Error starting agent:", error);
     showError("Failed to start explanation generation. Please try again.");
@@ -89,18 +155,20 @@ async function handleConceptSubmit(e) {
   }
 }
 
-// Start the agent HITL process
-function startAgentHITL(concept) {
+// Start the agent HITL process (Updated to POST)
+function startAgentHITL(payload) {
   return new Promise((resolve, reject) => {
-    const url = `${API_BASE_URL}/hitl/start_agent_hitl?concept=${encodeURIComponent(concept)}`;
+    const url = `${API_BASE_URL}/hitl/start_agent_hitl`;
 
-    console.log("Starting agent with URL:", url);
+    console.log("Starting agent with payload:", JSON.stringify(payload));
 
     fetch(url, {
-      method: "GET",
+      method: "POST",
       headers: {
-        Accept: "text/event-stream",
+        "Accept": "text/event-stream",
+        "Content-Type": "application/json"
       },
+      body: JSON.stringify(payload)
     })
       .then((response) => {
         if (!response.ok) {
@@ -201,11 +269,7 @@ function startAgentHITL(concept) {
   });
 }
 
-// Add this at the top with other state management
-let lastNodeExecuted = null;
-let workflowEnded = false;
-
-// Modified handleSSEEvent function
+// Handle SSE Event routing
 async function handleSSEEvent(eventName, data) {
   console.log("=== handleSSEEvent START ===");
   console.log("Event name:", eventName);
@@ -236,7 +300,6 @@ async function handleSSEEvent(eventName, data) {
 async function handleSSEMessage(data) {
   console.log("SSE Message:", data);
 
-  // Check if this is interrupt data (has 'type' and 'prompt' fields)
   if (data.type === "explanation") {
     console.log("Explanation interrupt received");
     await loadAndShowExplanation(false);
@@ -244,7 +307,6 @@ async function handleSSEMessage(data) {
     console.log("Figure interrupt received");
     await loadAndShowExplanation(true);
   } else if (data[""] === "") {
-    // Empty data object - node execution
     console.log("Node executed (empty data)");
   } else {
     console.log("Other data received:", data);
@@ -269,10 +331,7 @@ async function loadAndShowExplanation(includeFigures) {
     }
   } catch (error) {
     console.error("Error loading explanation:", error);
-    console.error("Error details:", error.message, error.stack);
     showError("Failed to load explanation: " + error.message);
-    // DON'T reset to initial screen - this might be called during stream processing
-    // showScreen('initial');
   }
 }
 
@@ -689,7 +748,27 @@ async function resetToInitial(shouldDelete = false) {
   currentConceptName = null;
   figureChangeDescriptions = {};
   figuresToDelete = new Set();
+  lastNodeExecuted = null;
+  workflowEnded = false;
 
-  document.getElementById("conceptInput").value = "";
+  // Reset Form UI
+  const form = document.getElementById("conceptFormWrapper");
+  if (form) form.reset();
+
+  const lessonNumInput = document.getElementById("lessonNumInput");
+  if (lessonNumInput) lessonNumInput.value = "";
+  
+  // Reset sublessons container to have only one empty input field
+  const container = document.getElementById("sublessonsContainer");
+  if (container) {
+    container.innerHTML = `
+      <div class="sublesson-input-group">
+        <input type="text" class="sublesson-input" placeholder="e.g., Finding the hypotenuse" required />
+        <button type="button" class="btn remove-sublesson-btn" disabled>&times;</button>
+      </div>
+    `;
+    updateRemoveButtons();
+  }
+
   showScreen("initial");
 }

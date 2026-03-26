@@ -18,6 +18,11 @@ async def add_to_cloud(concept_id, db=Depends(get_explanation_db)):
         graph_state = graph_state.values
 
         concept_name = graph_state["concept"]
+        lesson_num = graph_state["lesson_num"]
+        chapter_name = graph_state["chapter_name"]
+        chapter_num = graph_state["chapter_num"]
+        grade = graph_state["grade"]
+        sublessons = graph_state["sublessons"]
         concept_id = graph_state["concept_id"]
         explanation = graph_state["explainer_output"]
         snippets = graph_state["snippet_generator_output"]
@@ -28,6 +33,11 @@ async def add_to_cloud(concept_id, db=Depends(get_explanation_db)):
         await add_to_explanation_db(
             explainer_output=explanation,
             concept_id=int(concept_id),
+            chapter_name=chapter_name,
+            lesson_num=lesson_num,
+            chapter_num=chapter_num,
+            grade=grade,
+            sublessons=sublessons,
             concept_name=concept_name,
             tts_data=tts,
             snippets_data=snippets,
