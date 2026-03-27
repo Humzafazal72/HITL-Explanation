@@ -1,5 +1,5 @@
 // Configuration
-const API_BASE_URL = "http://127.0.0.1:8000" //"https://hitl-explanation.onrender.com"; // Update this to your actual API URL
+const API_BASE_URL = "https://hitl-explanation.onrender.com";//"http://127.0.0.1:8000" // Update this to your actual API URL
 
 // State management
 let currentConceptId = null;
