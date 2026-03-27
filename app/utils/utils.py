@@ -119,54 +119,56 @@ async def add_to_explanation_db(
     :param concept_name: Description
     :type concept_name: str
     """
-
     await db.execute(
-        "INSERT INTO lessons(ID, index, name, Chp_num, chp_class) VALUES(?,?)", (concept_id, lesson_num, concept_name, chapter_num, grade)
+        'INSERT INTO Lessons(ID, "index", name, Chp_num, chp_class) VALUES(?,?,?,?,?)', (concept_id, lesson_num, concept_name, chapter_num, grade)
     )
+    
     await db.execute(
-        "INSERT INTO conclusions(lesson_id, conclusion_text) VALUES(?,?)",
+        "INSERT INTO Conclusions(lesson_id, conclusion_text) VALUES(?,?)",
         (concept_id, explainer_output["conclusion"]),
     )
+    
     await db.execute(
-        "INSERT INTO contexts(lesson_id, context_text) VALUES(?,?)",
+        "INSERT INTO Contexts(lesson_id, context_text) VALUES(?,?)",
         (concept_id, explainer_output["context"]),
     )
+    
 
     # insert sublessons one by one
     for sublesson in sublessons:
         await db.execute(
-            "INSERT INTO explanation_steps(lesson_id, name) VALUES(?,?)",
+            "INSERT INTO sublessons(lesson_id, name) VALUES(?,?)",
             (concept_id, sublesson),
         )
-
+    
     # insert explanation steps one by one
     for step_num, step_text in enumerate(explainer_output["steps"]):
         await db.execute(
             "INSERT INTO explanation_steps(lesson_id, step_num, step_text) VALUES(?,?,?)",
             (concept_id, step_num, step_text),
         )
-
+    
     # insert TTS steps one by one
     for tts_num, tts_text in enumerate(tts_data):
         await db.execute(
             "INSERT INTO tts_steps(lesson_id, tts_text, step_num) VALUES(?,?,?)",
             (concept_id, tts_text, tts_num),
         )
-
+    
     # insert context snippets
     for snippet_num, snippet_text in enumerate(snippets_data["context_snippets"]):
         await db.execute(
             "INSERT INTO context_snippets(lesson_id, snippet_text, snippet_num) VALUES(?,?,?)",
             (concept_id, snippet_text, snippet_num),
         )
-
+    
     # insert conlusion snippets
     for snippet_num, snippet_text in enumerate(snippets_data["conclusion_snippets"]):
         await db.execute(
             "INSERT INTO conclusion_snippets(lesson_id, snippet_text, snippet_num) VALUES(?,?,?)",
             (concept_id, snippet_text, snippet_num),
         )
-
+    
     # insert explanation steps snippets
     for step_num, snippet_lists in enumerate(snippets_data["step_snippets"]):
         for snippet_num, snippet_text in enumerate(snippet_lists):
@@ -174,7 +176,7 @@ async def add_to_explanation_db(
                 "INSERT INTO step_snippets(lesson_id, step_num, snippet_num, snippet_text) VALUES(?,?,?,?)",
                 (concept_id, step_num, snippet_num, snippet_text),
             )
-
+    
 
 def remove_figures(concept_id: str):
     try:

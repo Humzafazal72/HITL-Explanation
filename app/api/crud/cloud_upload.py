@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/crud/add_to_cloud/")
 async def add_to_cloud(concept_id, db=Depends(get_explanation_db)):
-    try:
+#    try:
         graph_app, cm = await get_graph()
         config = {"configurable": {"thread_id": concept_id}}
 
@@ -29,7 +29,6 @@ async def add_to_cloud(concept_id, db=Depends(get_explanation_db)):
         tts = graph_state["tts_preprocessor_output"]["output"]
 
         upload_diagrams(str(concept_id))
-
         await add_to_explanation_db(
             explainer_output=explanation,
             concept_id=int(concept_id),
@@ -43,10 +42,9 @@ async def add_to_cloud(concept_id, db=Depends(get_explanation_db)):
             snippets_data=snippets,
             db=db,
         )
-
         remove_figures(concept_id=str(concept_id))
 
         return {"status": "200", "data": "Data uploaded to the cloud successfully!"}
 
-    except Exception as e:
-        return {"status": 500, "data": "Something went wrong!"}
+    # except Exception as e:
+    #     return {"status": 500, "data": f"Something went wrong!{e}"}
