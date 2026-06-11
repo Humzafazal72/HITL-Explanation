@@ -22,5 +22,5 @@ class ExplanationStart(BaseModel):
     lesson_num: int
     chapter_name: str
     chapter_num: int
-    grade: Literal["O-1","O-2","A-1","A-2"]
+    grade: Literal["O-1","O-2","A-1","A-2","Pre-O"]
     sublessons: List[str]
