@@ -13,7 +13,6 @@ def explainer(state: AgentState):
 
     # check if a review has been demanded by the client.
     if "explainer_decision" in state:
-        print("User asked for a review.")
         if state["explainer_decision"].change:
             content = f"""Concept: {state['concept']}\n
                     <Explanation Generated>\n
@@ -23,8 +22,7 @@ def explainer(state: AgentState):
         else:
             return state
     else:
-        print("state in case the upper if condition hasn't be fulfilled: ", state)
-        content = state["concept"]
+        content = "Concept: "+state["concept"]
 
     pm = PromptManager(type_="explainer")
     explainer_system_prompt = pm.get_system_prompt()

@@ -57,7 +57,7 @@ async def code_generator(
                 prompt=prompt,
                 google_client=google_client,
                 config=config,
-                model="gemini-3-pro-preview",
+                model="gemini-3.1-pro-preview",
             )
             parsed_code = parse_code(response.text)
             parsed_code = 'import matplotlib\nmatplotlib.use("Agg")\n' + parsed_code
@@ -78,13 +78,14 @@ async def code_generator(
 
     # Create all tasks
     tasks = [process_figure(item["figure_id"], item["prompt"], concept_id=concept_id) for item in prompts]
-
+    print("Tasks: ",tasks)
     results = {}
     # Process as they complete
     for coro in asyncio.as_completed(tasks):
         fig_id, result = await coro
         results[fig_id] = result
 
+    print("Figures: ", results)
     return results
 
 
