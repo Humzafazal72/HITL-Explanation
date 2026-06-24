@@ -22,3 +22,4 @@ e2b==2.10.1
 e2b-code-interpreter==2.4.1
 libsql==0.1.11
 libsql-client==0.3.1
+python-multipart==0.0.29
