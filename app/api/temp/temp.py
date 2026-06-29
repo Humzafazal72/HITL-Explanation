@@ -27,7 +27,10 @@ def upload_to_tigris(prompt_name: str, file_obj: io.BytesIO):
         Fileobj=file_obj,
         Bucket=BUCKET_NAME,
         Key=f"{prompt_name}.txt",
-        ExtraArgs={"ContentType": "text/plain"}
+        ExtraArgs={
+            "ContentType": "text/plain",
+            "CacheControl": "no-cache, no-store, must-revalidate"
+        }
     )
 
 @router.post("/api/upload-prompt")
